@@ -1,0 +1,19 @@
+{
+  "name": "daily-diet",
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=18"
+  },
+  "main": "src/server.ts",
+  "repository": "https://github.com/rafinhaa/daily-diet",
+  "author": "rafinhaa",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "@types/node": "^20.1.0",
+    "pino-pretty": "^10.0.0",
+    "tsup": "^6.7.0",
+    "tsx": "^3.12.7",
+    "typescript": "^5.0.4"
+  }
+}

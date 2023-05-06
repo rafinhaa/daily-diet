@@ -12,7 +12,21 @@ declare module "knex/types/tables" {
     deleted_at: string | null;
   }
 
+  export interface Meal {
+    id: string;
+    name: string;
+    description: string;
+    eated_at: string;
+    on_the_diet: boolean;
+    created_at: string;
+    updated_at: string | null;
+    deleted_at: string | null;
+
+    user_id: string;
+  }
+
   export interface Tables {
     users: User;
+    meals: Meal;
   }
 }

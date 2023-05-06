@@ -9,11 +9,17 @@
   "author": "rafinhaa",
   "license": "MIT",
   "private": false,
+  "scripts": {
+    "dev": "tsx watch src/server.ts"
+  },
   "devDependencies": {
     "@types/node": "^20.1.0",
     "pino-pretty": "^10.0.0",
     "tsup": "^6.7.0",
     "tsx": "^3.12.7",
     "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "fastify": "^4.17.0"
   }
 }

@@ -1,10 +1,12 @@
 import fastify from "fastify";
+import cookie, { FastifyCookieOptions } from "@fastify/cookie";
 import { env } from "./env";
 
 import { users } from "@/routes/user";
 import { ZodError } from "zod";
 import { BaseError } from "@/errors/baseError";
 import { meals } from "./routes/meal";
+import { auth } from "./routes/auth";
 
 const envToLogger = {
   development: {
@@ -24,8 +26,13 @@ export const app = fastify({
   logger: envToLogger[env.NODE_ENV],
 });
 
+app.register(cookie, {
+  secret: env.COOKIE_SECRET,
+} as FastifyCookieOptions);
+
 app.register(users, { prefix: "/user" });
 app.register(meals, { prefix: "/meal" });
+app.register(auth, { prefix: "/auth" });
 
 app.setErrorHandler((error, _, reply) => {
   if (env.NODE_ENV !== "production") console.error(error);

@@ -13,6 +13,8 @@ const envSchema = z.object({
   PORT: z.coerce.number().default(3000),
   DATABASE_CLIENT: z.enum(["better-sqlite3"]).default("better-sqlite3"),
   DATABASE_URL: z.string(),
+  COOKIE_SECRET: z.string(),
+  COOKIE_EXPIRES_IN_MINUTES: z.coerce.number().default(60 * 24 * 7),
 });
 
 const envParser = envSchema.safeParse(process.env);

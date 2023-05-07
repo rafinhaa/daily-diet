@@ -25,8 +25,18 @@ declare module "knex/types/tables" {
     user_id: string;
   }
 
+  export interface Session {
+    id: string;
+    token: string;
+    ip_address: string;
+    expires_at: string;
+    created_at: string;
+    user_id: string;
+  }
+
   export interface Tables {
     users: User;
     meals: Meal;
+    sessions: Session;
   }
 }

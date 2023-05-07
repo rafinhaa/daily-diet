@@ -4,6 +4,7 @@ import { env } from "./env";
 import { users } from "@/routes/user";
 import { ZodError } from "zod";
 import { BaseError } from "@/errors/baseError";
+import { meals } from "./routes/meal";
 
 const envToLogger = {
   development: {
@@ -24,6 +25,7 @@ export const app = fastify({
 });
 
 app.register(users, { prefix: "/user" });
+app.register(meals, { prefix: "/meal" });
 
 app.setErrorHandler((error, _, reply) => {
   if (env.NODE_ENV !== "production") console.error(error);

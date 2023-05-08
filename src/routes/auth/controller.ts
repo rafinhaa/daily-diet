@@ -20,10 +20,17 @@ export const handlerSignIn = async (req: FastifyRequest, rep: FastifyReply) => {
     throw new UnauthorizedError();
   }
 
-  let sessionId = req.cookies.sessionId;
-  if (!sessionId) sessionId = randomUUID();
-
+  const sessionId = randomUUID();
+  const expiresInSeconds = env.COOKIE_EXPIRES_IN_MINUTES * 60;
   const expiresInMiliSeconds = env.COOKIE_EXPIRES_IN_MINUTES * 60 * 1000;
+
+  await knex("sessions").insert({
+    id: randomUUID(),
+    user_id: user.id,
+    token: sessionId,
+    ip_address: req.ip,
+    expires_at: knex.raw(`datetime('now', '+${expiresInSeconds} seconds')`),
+  });
 
   rep.cookie("sessionId", sessionId, {
     path: "/",

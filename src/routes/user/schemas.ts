@@ -6,3 +6,7 @@ export const registerUserBodySchema = z.object({
   password: z.string().min(8),
   avatarUrl: z.string().url(),
 });
+
+export const getStatsUserParamsSchema = z.object({
+  userId: z.string().uuid(),
+});

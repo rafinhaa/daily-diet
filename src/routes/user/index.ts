@@ -1,6 +1,14 @@
 import { FastifyInstance } from "fastify";
-import { handlerRegisterUser } from "./controller";
+import { handlerGetStats, handlerRegisterUser } from "./controller";
+import { checkSessionIdExists } from "@/middlewares/checkUserSession";
 
 export const users = async (app: FastifyInstance) => {
   app.post("/", handlerRegisterUser);
+  app.get(
+    "/:userId/stats",
+    {
+      preHandler: [checkSessionIdExists],
+    },
+    handlerGetStats
+  );
 };

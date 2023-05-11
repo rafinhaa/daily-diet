@@ -24,15 +24,26 @@ export const handlerSignIn = async (req: FastifyRequest, rep: FastifyReply) => {
   const expiresInSeconds = env.COOKIE_EXPIRES_IN_MINUTES * 60;
   const expiresInMiliSeconds = env.COOKIE_EXPIRES_IN_MINUTES * 60 * 1000;
 
+  const sessionObject = JSON.stringify({
+    token: sessionId,
+    userId: user.id,
+  });
+
+  const ipHeader = Array.isArray(req.headers["x-forwarded-for"])
+    ? req.headers["x-forwarded-for"][0]
+    : req.headers["x-forwarded-for"];
+
+  const ipAddress = ipHeader ?? req.ip;
+
   await knex("sessions").insert({
     id: randomUUID(),
     user_id: user.id,
     token: sessionId,
-    ip_address: (req.headers["x-forwarded-for"] as string) || req.ip,
+    ip_address: ipAddress,
     expires_at: knex.raw(`datetime('now', '+${expiresInSeconds} seconds')`),
   });
 
-  rep.cookie("sessionId", sessionId, {
+  rep.cookie("sessionId", sessionObject, {
     path: "/",
     httpOnly: true,
     sameSite: "strict",

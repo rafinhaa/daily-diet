@@ -21,9 +21,11 @@ export const handlerCreateMeal = async (
   const { description, name, eatedAt, onTheDiet } = createMealBodySchema.parse(
     req.body
   );
-  const { userId } = createMealParamsSchema.parse(req.params);
+  createMealParamsSchema.parse(req.params);
 
-  const user = await knex("users").where({ id: userId }).first();
+  const user = await knex("users")
+    .where({ id: req.sessionData.userId })
+    .first();
   if (!user) throw new ResourceNotFound("User not found");
 
   const [meal] = await knex("meals").insert(
@@ -33,7 +35,7 @@ export const handlerCreateMeal = async (
       description,
       eated_at: eatedAt,
       on_the_diet: onTheDiet,
-      user_id: userId,
+      user_id: req.sessionData.userId,
     },
     [
       "id",
@@ -58,8 +60,10 @@ export const handlerDeleteMeal = async (
 ) => {
   const { mealId } = deleteMealParamsSchema.parse(req.params);
 
+  const { userId } = req.sessionData;
+
   const meal = await knex("meals")
-    .where({ id: mealId })
+    .where({ id: mealId, user_id: userId })
     .whereNull("deleted_at")
     .first();
   if (!meal) throw new ResourceNotFound("Meal not found");
@@ -83,7 +87,11 @@ export const handlerUpdateMeal = async (
 ) => {
   const { mealId } = deleteMealParamsSchema.parse(req.params);
 
-  const resourceExists = await knex("meals").where({ id: mealId }).first();
+  const { userId } = req.sessionData;
+
+  const resourceExists = await knex("meals")
+    .where({ id: mealId, user_id: userId })
+    .first();
   if (!resourceExists) throw new ResourceNotFound("Meal not found");
 
   const { description, name, eatedAt, onTheDiet } = createMealBodySchema.parse(
@@ -120,7 +128,9 @@ export const handlerGetAllMeals = async (
   }>,
   rep: FastifyReply
 ) => {
-  const { userId } = getAllMealsParamsSchema.parse(req.params);
+  getAllMealsParamsSchema.parse(req.params);
+
+  const { userId } = req.sessionData;
 
   const meals = await knex("meals")
     .select([
@@ -148,6 +158,8 @@ export const handlerGetMeal = async (
 ) => {
   const { mealId } = getMealParamsSchema.parse(req.params);
 
+  const { userId } = req.sessionData;
+
   const [meal] = await knex("meals")
     .select([
       "id",
@@ -158,7 +170,7 @@ export const handlerGetMeal = async (
       "created_at as createdAt",
       "updated_at as updatedAt",
     ])
-    .where({ id: mealId })
+    .where({ id: mealId, user_id: userId })
     .whereNull("deleted_at");
 
   if (!meal) throw new ResourceNotFound("Meal not found");

@@ -28,7 +28,7 @@ export const handlerSignIn = async (req: FastifyRequest, rep: FastifyReply) => {
     id: randomUUID(),
     user_id: user.id,
     token: sessionId,
-    ip_address: req.ip,
+    ip_address: (req.headers["x-forwarded-for"] as string) || req.ip,
     expires_at: knex.raw(`datetime('now', '+${expiresInSeconds} seconds')`),
   });
 
@@ -36,12 +36,21 @@ export const handlerSignIn = async (req: FastifyRequest, rep: FastifyReply) => {
     path: "/",
     httpOnly: true,
     sameSite: "strict",
-    secure: process.env.NODE_ENV === "production",
+    secure: env.NODE_ENV === "production",
     maxAge: expiresInMiliSeconds,
     signed: true,
   });
 
-  return rep.status(200).send();
+  const userResponse = {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    avatar_url: user.avatar_url,
+    created_at: user.created_at,
+    updated_at: user.updated_at,
+  };
+
+  return rep.status(200).send({ user: userResponse });
 };
 
 export const handlerSignOut = async (
@@ -52,7 +61,7 @@ export const handlerSignOut = async (
     path: "/",
     httpOnly: true,
     sameSite: "strict",
-    secure: process.env.NODE_ENV === "production",
+    secure: env.NODE_ENV === "production",
     maxAge: 0,
     signed: true,
   });

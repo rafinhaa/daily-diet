@@ -126,6 +126,21 @@ Fazer logoff na api
 
 - Request (empty)
 
+  - Response example
+
+  ```json
+  {
+    "user": {
+      "id": "a006ed66-bea7-4bc9-8572-d6813d0c56b3",
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "avatar_url": "https://api.dicebear.com/6.x/initials/svg?seed=John",
+      "created_at": "2023-05-10 23:04:43",
+      "updated_at": null
+    }
+  }
+  ```
+
 - Response codes
 
 | Código | Descrição                    |
@@ -144,31 +159,31 @@ Criar nova refeição
 
 - Request (application/json)
 
-  - Body
+- Body
 
-  ```json
-  {
-    "name": "Café",
-    "description": "Cafezinho da maria",
+```json
+{
+  "name": "Café",
+  "description": "Cafezinho da maria",
+  "eatedAt": "2020-01-01T00:00:00Z",
+  "onTheDiet": true
+}
+```
+
+- Response example
+
+```json
+{
+  "meal": {
+    "id": "dcf22673-a1bd-42a0-b3c4-af9f26a4a415",
+    "name": "22",
+    "description": "cafezinho da maria",
     "eatedAt": "2020-01-01T00:00:00Z",
-    "onTheDiet": true
+    "onTheDiet": 1,
+    "createdAt": "2023-05-10 23:06:23"
   }
-  ```
-
-  - Response example
-
-  ```json
-  {
-    "meal": {
-      "id": "dcf22673-a1bd-42a0-b3c4-af9f26a4a415",
-      "name": "22",
-      "description": "cafezinho da maria",
-      "eatedAt": "2020-01-01T00:00:00Z",
-      "onTheDiet": 1,
-      "createdAt": "2023-05-10 23:06:23"
-    }
-  }
-  ```
+}
+```
 
 - Response codes
 

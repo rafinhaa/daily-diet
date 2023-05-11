@@ -1,4 +1,4 @@
-import fastify from "fastify";
+import fastify, { FastifyReply, FastifyRequest } from "fastify";
 import cookie, { FastifyCookieOptions } from "@fastify/cookie";
 import { env } from "./env";
 
@@ -18,7 +18,16 @@ const envToLogger = {
       },
     },
   },
-  production: true,
+  production: {
+    serializers: {
+      res: (res: FastifyReply) => ({
+        ip: res.request.headers["x-forwarded-for"] || res.request.ip,
+      }),
+      req: (req: FastifyRequest) => ({
+        ip: req.headers["x-forwarded-for"] || req.ip,
+      }),
+    },
+  },
   test: false,
 };
 

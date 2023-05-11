@@ -21,9 +21,12 @@ export const checkSessionIdExists = async (
       "You must be logged in to access this resource"
     );
 
+  const cookieParsed: { token: string; userId: string } = JSON.parse(value);
+
   const session = await knex("sessions")
     .where({
-      token: value,
+      token: cookieParsed.token,
+      user_id: cookieParsed.userId,
     })
     .orderBy("created_at", "desc")
     .first();
@@ -42,8 +45,16 @@ export const checkSessionIdExists = async (
     );
   }
 
-  if (session.ip_address !== req.ip)
+  const ipHeader = Array.isArray(req.headers["x-forwarded-for"])
+    ? req.headers["x-forwarded-for"][0]
+    : req.headers["x-forwarded-for"];
+
+  const ipAddress = ipHeader ?? req.ip;
+
+  if (session.ip_address !== ipAddress)
     throw new UnauthorizedError(
       "You must be logged in to access this resource"
     );
+
+  req.sessionData = cookieParsed;
 };

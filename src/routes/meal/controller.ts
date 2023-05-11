@@ -23,6 +23,9 @@ export const handlerCreateMeal = async (
   );
   const { userId } = createMealParamsSchema.parse(req.params);
 
+  const user = await knex("users").where({ id: userId }).first();
+  if (!user) throw new ResourceNotFound("User not found");
+
   const [meal] = await knex("meals").insert(
     {
       id: randomUUID(),

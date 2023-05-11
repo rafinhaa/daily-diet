@@ -177,6 +177,7 @@ Criar nova refeição
 | `201`  | Refeição criado com sucesso.                                                      |
 | `400`  | Erros de validação, campos informados não existem ou parâmetros de url inválidos. |
 | `401`  | Sem permissão de acesso                                                           |
+| `404`  | Usuário não encontrado                                                            |
 | `500`  | Erro no servidor.                                                                 |
 
 ### Apagar refeição [/:mealId]

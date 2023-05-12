@@ -31,8 +31,8 @@ A criação de um usuário é possível na API, permitindo que apenas o próprio
 
 ```sh
 # Clone the repository
-git clone https://github.com/rafinhaa/daily-diet.git
-cd daily-diet
+git clone https://github.com/rafinhaa/daily-diet-backend.git
+cd daily-diet-backend
 
 # Install the dependencies
 yarn install

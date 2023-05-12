@@ -21,12 +21,7 @@ const envToLogger = {
   production: {
     serializers: {
       res: (res: FastifyReply) => ({
-        ip: res.request.headers["x-forwarded-for"] || res.request.ip,
-        method: res.request.method,
-        url: res.request.url,
-        hostname: res.request.hostname,
-        remoteAddress: res.request.socket.remoteAddress,
-        remotePort: res.request.socket.remotePort,
+        statusCode: res.statusCode,
       }),
       req: (req: FastifyRequest) => ({
         ip: req.headers["x-forwarded-for"] || req.ip,

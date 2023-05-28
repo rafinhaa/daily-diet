@@ -1,12 +1,17 @@
 import fastify, { FastifyReply, FastifyRequest } from "fastify";
 import cookie, { FastifyCookieOptions } from "@fastify/cookie";
 import { env } from "./env";
+import * as Sentry from "@sentry/node";
 
 import { users } from "@/routes/user";
 import { ZodError } from "zod";
 import { BaseError } from "@/errors/baseError";
 import { meals } from "./routes/meal";
 import { auth } from "./routes/auth";
+
+Sentry.init({
+  dsn: env.SENTRY_DSN,
+});
 
 const envToLogger = {
   development: {
@@ -49,7 +54,13 @@ app.register(meals, { prefix: "/meal" });
 app.register(auth, { prefix: "/auth" });
 
 app.setErrorHandler((error, _, reply) => {
-  if (env.NODE_ENV !== "production") console.error(error);
+  const mappingError = {
+    production: () => Sentry.captureException(error),
+    development: () => console.error(error),
+    test: () => console.warn(error),
+  }[env.NODE_ENV];
+
+  mappingError();
 
   if (error instanceof ZodError)
     return reply.status(400).send({

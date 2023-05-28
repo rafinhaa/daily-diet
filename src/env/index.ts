@@ -15,6 +15,7 @@ const envSchema = z.object({
   DATABASE_URL: z.string().default("/database/db.sqlite"),
   COOKIE_SECRET: z.string().default("secret"),
   COOKIE_EXPIRES_IN_MINUTES: z.coerce.number().default(60 * 24 * 7),
+  SENTRY_DSN: z.string().default(""),
 });
 
 const envParser = envSchema.safeParse(process.env);

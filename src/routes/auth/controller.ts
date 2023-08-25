@@ -68,6 +68,18 @@ export const handlerSignOut = async (
   req: FastifyRequest,
   rep: FastifyReply
 ) => {
+  const { userId, token } = req.sessionData;
+
+  await knex("sessions")
+    .update({
+      expires_at: knex.fn.now(),
+    })
+    .where({
+      token,
+      user_id: userId,
+    })
+    .orderBy("created_at", "desc");
+
   rep.clearCookie("sessionId", {
     path: "/",
     httpOnly: true,

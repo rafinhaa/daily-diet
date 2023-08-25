@@ -45,19 +45,24 @@ export const handlerGetStats = async (
   const user = await knex("users").where({ id: userId }).first();
   if (!user) throw new ResourceNotFound("User not found");
 
-  const stats = await knex("meals")
-    .select([
-      knex.raw("count(*) as totalMeals"),
-      knex.raw("sum(CASE WHEN on_the_diet THEN 1 ELSE 0 END) as dietMeals"),
-      knex.raw("sum(CASE WHEN on_the_diet THEN 0 ELSE 1 END) as nonDietMeals"),
-      knex.raw(
-        "(sum(CASE WHEN on_the_diet THEN 1 ELSE 0 END) * 100 / count(*)) as dietPercentage"
-      ),
-    ])
+  const meals = await knex("meals")
     .where("user_id", userId)
-    .first();
+    .whereNull("deleted_at");
 
-  const meals = await knex("meals").where("user_id", userId);
+  const score = meals.reduce(
+    (acc, meal) => {
+      if (meal.on_the_diet) {
+        acc.dietMeals++;
+      } else {
+        acc.nonDietMeals++;
+      }
+      return acc;
+    },
+    {
+      dietMeals: 0,
+      nonDietMeals: 0,
+    }
+  );
 
   const bestSequenceMeals = meals.reduce(
     (acc, meal) => {
@@ -77,6 +82,11 @@ export const handlerGetStats = async (
   );
 
   return rep.status(200).send({
-    stats: { ...stats, bestSequence: bestSequenceMeals.bestSequence },
+    stats: {
+      bestSequence: bestSequenceMeals.bestSequence,
+      totalMeals: meals.length,
+      ...score,
+      dietPercentage: (score.dietMeals / meals.length) * 100 || 0,
+    },
   });
 };

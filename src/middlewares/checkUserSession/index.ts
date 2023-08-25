@@ -1,5 +1,5 @@
 import { knex } from "@/database";
-import { UnauthorizedError } from "@/errors/UnauthorizedError";
+import { ForbiddenError } from "@/errors/ForbiddenError";
 import { FastifyReply, FastifyRequest } from "fastify";
 import moment from "moment";
 
@@ -10,16 +10,12 @@ export const checkSessionIdExists = async (
   const sessionId = req.cookies.sessionId;
 
   if (!sessionId)
-    throw new UnauthorizedError(
-      "You must be logged in to access this resource"
-    );
+    throw new ForbiddenError("You must be logged in to access this resource");
 
   const { valid, value } = req.unsignCookie(sessionId as string);
 
   if (!valid || !value)
-    throw new UnauthorizedError(
-      "You must be logged in to access this resource"
-    );
+    throw new ForbiddenError("You must be logged in to access this resource");
 
   const cookieParsed: { token: string; userId: string } = JSON.parse(value);
 
@@ -32,17 +28,13 @@ export const checkSessionIdExists = async (
     .first();
 
   if (!session)
-    throw new UnauthorizedError(
-      "You must be logged in to access this resource"
-    );
+    throw new ForbiddenError("You must be logged in to access this resource");
 
   const expires_at = moment.utc(session.expires_at);
   const dateNowUtc = moment().utc();
 
   if (expires_at.isBefore(dateNowUtc)) {
-    throw new UnauthorizedError(
-      "You must be logged in to access this resource"
-    );
+    throw new ForbiddenError("You must be logged in to access this resource");
   }
 
   const ipHeader = Array.isArray(req.headers["x-forwarded-for"])
@@ -52,9 +44,7 @@ export const checkSessionIdExists = async (
   const ipAddress = ipHeader ?? req.ip;
 
   if (session.ip_address !== ipAddress)
-    throw new UnauthorizedError(
-      "You must be logged in to access this resource"
-    );
+    throw new ForbiddenError("You must be logged in to access this resource");
 
   req.sessionData = cookieParsed;
 };

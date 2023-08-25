@@ -98,24 +98,26 @@ export const handlerUpdateMeal = async (
     req.body
   );
 
-  const [meal] = await knex("meals").update(
-    {
-      name,
-      description,
-      eated_at: eatedAt,
-      on_the_diet: onTheDiet,
-      updated_at: knex.fn.now(),
-    },
-    [
-      "id",
-      "name",
-      "description",
-      "eated_at as eatedAt",
-      "on_the_diet as onTheDiet",
-      "updated_at as updatedAt",
-      "created_at as createdAt",
-    ]
-  );
+  const [meal] = await knex("meals")
+    .update(
+      {
+        name,
+        description,
+        eated_at: eatedAt,
+        on_the_diet: onTheDiet,
+        updated_at: knex.fn.now(),
+      },
+      [
+        "id",
+        "name",
+        "description",
+        "eated_at as eatedAt",
+        "on_the_diet as onTheDiet",
+        "updated_at as updatedAt",
+        "created_at as createdAt",
+      ]
+    )
+    .where({ id: mealId });
 
   return rep.status(200).send({ meal });
 };
